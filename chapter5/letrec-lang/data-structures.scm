@@ -21,14 +21,14 @@
   (define expval->num
     (lambda (v)
       (cases expval v
-	(num-val (num) num)
-	(else (expval-extractor-error 'num v)))))
+	      (num-val (num) num)
+	      (else (expval-extractor-error 'num v)))))
 
   (define expval->bool
     (lambda (v)
       (cases expval v
-	(bool-val (bool) bool)
-	(else (expval-extractor-error 'bool v)))))
+        (bool-val (bool) bool)
+        (else (expval-extractor-error 'bool v)))))
 
   (define expval->proc
     (lambda (v)

@@ -35,9 +35,9 @@
         (empty-env ()
           (eopl:error 'apply-env "No binding for ~s" search-sym))
         (extend-env (var val saved-env)
-	  (if (eqv? search-sym var)
-	    val
-	    (apply-env saved-env search-sym)))
+          (if (eqv? search-sym var)
+            val
+            (apply-env saved-env search-sym)))
         (extend-env-rec (p-name b-var p-body saved-env)
           (if (eqv? search-sym p-name)
             (proc-val (procedure b-var p-body env))          
