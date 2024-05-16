@@ -18,6 +18,7 @@
     (pair-val
       (val1 expval?)
       (val2 expval?))
+    (emptylist-val)
   )
 
 ;;; extractors:
@@ -46,6 +47,21 @@
         (pair-val (val1 val2) (cons val1 val2))
         (else (expval-extractor-error 'pair v)))))
   
+  (define (expval->car v)
+    (cases expval v
+      (pair-val (val1 val2) val1)
+      (else (expval-extractor-error 'car v))))
+
+  (define (expval->cdr v)
+    (cases expval v
+      (pair-val (val1 val2) val2)
+      (else (expval-extractor-error 'cdr v))))
+
+  (define (expval->null? v)
+    (cases expval v
+      (emptylist-val () (bool-val #t))
+      (else (bool-val #f))))
+  
   (define expval-extract
     (lambda (v)
       (cases expval v
@@ -54,6 +70,7 @@
         (proc-val (proc) proc)
         (pair-val (val1 val2)
                   (cons (expval-extract val1) (expval-extract val2)))
+        (emptylist-val '())
       )
     )
   )
@@ -103,6 +120,12 @@
       (saved-cont continuation?))
     (cons2-cont
       (val1 expval?)
+      (saved-cont continuation?))
+    (car-cont
+      (saved-cont continuation?))
+    (cdr-cont
+      (saved-cont continuation?))
+    (null?-cont
       (saved-cont continuation?)))
 
 ;;;;;;;;;;;;;;;; procedures ;;;;;;;;;;;;;;;;

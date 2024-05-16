@@ -21,9 +21,9 @@
     (lambda (string)
       (value-of-program (scan&parse string))))
 
-  (define test
+  (define test-extract
     (lambda ()
-      (expval-extract (run "cons(21,4)"))))
+      (expval-extract (run "cons(21,2)"))))
 
 ; )
 
