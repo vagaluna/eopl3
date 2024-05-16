@@ -8,7 +8,7 @@
 
   ;; exercise: rewrite this using a trampoline (page 159).
 
-  (require "drscheme-init.scm")
+  ; (require "drscheme-init.scm")
 
   (require "lang.scm")
   (require "data-structures.scm")
@@ -46,10 +46,6 @@
         (let-exp (var exp1 body)
           (value-of/k exp1 env
             (let-exp-cont var body env cont)))
-        (let2-exp (var1 exp1 var2 exp2 body)
-          (value-of/k exp1 
-                      env
-                      (let2-cont1 var1 var2 exp2 body env cont)))
         (if-exp (exp1 exp2 exp3)
           (value-of/k exp1 env
             (if-test-cont exp2 exp3 env cont)))
@@ -59,6 +55,9 @@
         (call-exp (rator rand) 
           (value-of/k rator env
             (rator-cont rand env cont)))
+        (cons-exp (exp1 exp2)
+          (value-of/k exp1 env
+                      (cons1-cont exp2 env cont)))
    )))
 
   ;; apply-cont : Cont * ExpVal -> FinalAnswer
@@ -79,15 +78,6 @@
         (let-exp-cont (var body saved-env saved-cont)
           (value-of/k body
             (extend-env var val saved-env) saved-cont))
-        (let2-cont1 (var1 var2 exp2 body saved-env saved-cont)
-          (value-of/k exp2
-                      saved-env
-                      (let2-cont2 var2 body
-                                  (extend-env var1 val saved-env) saved-cont)))
-        (let2-cont2 (var2 body saved-env saved-cont)
-          (value-of/k body
-                      (extend-env var2 val saved-env)
-                      saved-cont))
         (if-test-cont (exp2 exp3 saved-env saved-cont)
           (if (expval->bool val)
              (value-of/k exp2 saved-env saved-cont)
@@ -106,6 +96,11 @@
         (rand-cont (val1 saved-cont)
           (let ((proc (expval->proc val1)))
             (apply-procedure/k proc val saved-cont)))
+        (cons1-cont (exp2 saved-env saved-cont)
+          (value-of/k exp2 saved-env
+                      (cons2-cont val saved-cont)))
+        (cons2-cont (val1 saved-cont)
+          (apply-cont saved-cont (pair-val val1 val)))
         )))
 
   ;; apply-procedure/k : Proc * ExpVal * Cont -> FinalAnswer
